@@ -1,51 +1,36 @@
 import os
+import sys
 from supabase import create_client
 
 # 1. Connect to your Database
 url = os.environ.get("SUPABASE_URL")
 key = os.environ.get("SUPABASE_SERVICE_KEY")
 
-print(f"SUPABASE_URL: {url}")
-print(f"SUPABASE_SERVICE_KEY: {'*' * 10}...")
+print(f"URL present: {bool(url)}")
+print(f"Key present: {bool(key)}")
+print(f"URL: {url}")
 
-supabase = create_client(url, key)
+# Try to connect
+try:
+    supabase = create_client(url, key)
+    print("✓ Supabase client created successfully")
+except Exception as e:
+    print(f"✗ Error creating client: {e}")
+    sys.exit(1)
 
-# Hardcoded test leads to verify Supabase connection works
+# Hardcoded test leads
 test_leads = [
-    {
-        "business_name": "John's Plumbing Services",
-        "website": "https://johnsplumbing.com",
-        "issue_found": "Website needs SSL certificate update"
-    },
-    {
-        "business_name": "Smith Roofing Company",
-        "website": "https://smithroofing.net",
-        "issue_found": "Contact form not working"
-    },
-    {
-        "business_name": "Downtown HVAC Specialists",
-        "website": "https://downtownhvac.com",
-        "issue_found": "Missing business hours information"
-    },
-    {
-        "business_name": "Green Landscaping LLC",
-        "website": "https://greenlandscaping.io",
-        "issue_found": "Portfolio images not loading"
-    },
-    {
-        "business_name": "Elite Dental Studio",
-        "website": "https://elitedentalstudio.com",
-        "issue_found": "Patient reviews section outdated"
-    }
+    {"business_name": "Test 1", "website": "https://test1.com", "issue_found": "Test issue 1"},
+    {"business_name": "Test 2", "website": "https://test2.com", "issue_found": "Test issue 2"},
 ]
 
-print(f"\nAttempting to insert {len(test_leads)} test leads...")
-
+# Try to insert
 for lead in test_leads:
     try:
+        print(f"Inserting: {lead['business_name']}")
         response = supabase.table("leads").insert(lead).execute()
-        print(f"✓ Inserted: {lead['business_name']}")
+        print(f"✓ Success: {response}")
     except Exception as e:
-        print(f"✗ Error inserting {lead['business_name']}: {str(e)}")
-
-print("\nScript completed!")
+        print(f"✗ Error: {str(e)}")
+        import traceback
+        traceback.print_exc()
