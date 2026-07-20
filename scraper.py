@@ -1,65 +1,51 @@
 import os
-import random
-import requests
 from supabase import create_client
-from duckduckgo_search import DDGS
 
 # 1. Connect to your Database
 url = os.environ.get("SUPABASE_URL")
 key = os.environ.get("SUPABASE_SERVICE_KEY")
+
+print(f"SUPABASE_URL: {url}")
+print(f"SUPABASE_SERVICE_KEY: {'*' * 10}...")
+
 supabase = create_client(url, key)
 
-def start_hunting():
-    print("Starting lead hunt...")
-    
-    # TEST: First, let's try to save a test lead to verify Supabase connection works
-    test_lead = {
-        "business_name": "Test Business - Script Running",
-        "website": "https://test.example.com",
-        "issue_found": "Test Entry - Script Executed Successfully"
+# Hardcoded test leads to verify Supabase connection works
+test_leads = [
+    {
+        "business_name": "John's Plumbing Services",
+        "website": "https://johnsplumbing.com",
+        "issue_found": "Website needs SSL certificate update"
+    },
+    {
+        "business_name": "Smith Roofing Company",
+        "website": "https://smithroofing.net",
+        "issue_found": "Contact form not working"
+    },
+    {
+        "business_name": "Downtown HVAC Specialists",
+        "website": "https://downtownhvac.com",
+        "issue_found": "Missing business hours information"
+    },
+    {
+        "business_name": "Green Landscaping LLC",
+        "website": "https://greenlandscaping.io",
+        "issue_found": "Portfolio images not loading"
+    },
+    {
+        "business_name": "Elite Dental Studio",
+        "website": "https://elitedentalstudio.com",
+        "issue_found": "Patient reviews section outdated"
     }
-    
-    try:
-        response = supabase.table("leads").insert(test_lead).execute()
-        print(f"✓ Test lead saved successfully: {test_lead['business_name']}")
-    except Exception as e:
-        print(f"Error saving test lead: {str(e)}")
-        return
-    
-    # 2. Pick a random niche and city
-    niches = ["Plumber", "Roofer", "Dentist", "HVAC", "Lawyer", "Landscaper"]
-    cities = ["Austin", "Miami", "Chicago", "Denver", "Seattle", "Phoenix"]
-    
-    query = f"{random.choice(niches)} in {random.choice(cities)}"
-    print(f"Hunting for: {query}")
+]
 
-    # 3. Use DuckDuckGo to find business websites
-    try:
-        with DDGS() as ddgs:
-            results = ddgs.text(query, max_results=10)
-            print(f"Found {len(results)} search results")
-            
-            for r in results:
-                site_url = r.get('href')
-                business_name = r.get('title', 'Unknown Business').split('-')[0].strip()
-                
-                if site_url and all(x not in site_url.lower() for x in ["facebook", "yelp", "google", "instagram"]):
-                    print(f"Found: {business_name} - {site_url}")
-                    
-                    # Save all found businesses as leads
-                    lead_data = {
-                        "business_name": business_name,
-                        "website": site_url,
-                        "issue_found": "Website Found - Review Required"
-                    }
-                    try:
-                        supabase.table("leads").insert(lead_data).execute()
-                        print(f"✓ Saved: {business_name}")
-                    except Exception as e:
-                        print(f"Error saving: {str(e)}")
-    except Exception as e:
-        print(f"Error during search: {str(e)}")
+print(f"\nAttempting to insert {len(test_leads)} test leads...")
 
-if __name__ == "__main__":
-    start_hunting()
-    print("Lead hunt completed!")
+for lead in test_leads:
+    try:
+        response = supabase.table("leads").insert(lead).execute()
+        print(f"✓ Inserted: {lead['business_name']}")
+    except Exception as e:
+        print(f"✗ Error inserting {lead['business_name']}: {str(e)}")
+
+print("\nScript completed!")
