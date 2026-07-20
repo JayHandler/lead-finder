@@ -51,7 +51,11 @@ def start_hunting():
                         "website": site_url,
                         "issue_found": "No SSL/Insecure Website"
                     }
-                    supabase.table("leads").insert(lead_data).execute()
+                    try:
+                        supabase.table("leads").insert(lead_data).execute()
+                        print(f"Lead saved: {business_name}")
+                    except Exception as e:
+                        print(f"Error saving lead: {str(e)}")
 
 if __name__ == "__main__":
     start_hunting()
