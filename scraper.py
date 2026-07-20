@@ -14,15 +14,15 @@ def find_leads():
     
     # Example lead found
     lead = {
-        "name": "Example Plumbing",
-        "site": "http://example-plumbing.com",
-        "issue": "No SSL Certificate (Security Risk)"
+        "business_name": "Example Plumbing",
+        "website": "http://example-plumbing.com",
+        "issue_found": "No SSL Certificate (Security Risk)"
     }
     
     # Save lead to Supabase
     try:
         response = supabase.table("leads").insert(lead).execute()
-        print(f"Lead saved successfully: {lead['name']}")
+        print(f"Lead saved successfully: {lead['business_name']}")
         return response
     except Exception as e:
         print(f"Error saving lead: {str(e)}")
