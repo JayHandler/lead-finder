@@ -24,9 +24,7 @@ jobs:
           pip install requests supabase duckduckgo_search
       
       - name: Run lead hunter script
-            - name: Run lead hunter script
         env:
           SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
           SUPABASE_SERVICE_KEY: ${{ secrets.SUPABASE_SERVICE_KEY }}
         run: python scraper.py
-        
